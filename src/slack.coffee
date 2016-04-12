@@ -50,6 +50,10 @@ class SlackBot extends Adapter
   error: (error) =>
     return @robot.logger.warning "Received rate limiting error #{JSON.stringify error}" if error.code == -1
 
+    if not @client.connected and @options.exitOnDisconnect
+      @robot.logger.info 'Slack client errored while disconnected, exiting hubot process'
+      process.exit 1
+
     @robot.emit 'error', error
 
   loggedIn: (self, team) =>
